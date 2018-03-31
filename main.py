@@ -24,9 +24,11 @@ def parse_basket(fstr: str) -> Dict:
 def apply_discount(**parsed_basket: Dict) -> Tuple[float, Dict, Dict]:
     total = 0
     bonus_foods = defaultdict(lambda: 0)
-    for disc, value in discount.items():
-        if disc not in parsed_basket:
+    for disc, value in parsed_basket.items():
+        if disc not in discount:
+            total += food[disc]['price']*value
             continue
+        value = discount[disc]
         amount = parsed_basket[disc]
         bonus_mul = 0
         if amount >= value['quantity']:
@@ -35,6 +37,7 @@ def apply_discount(**parsed_basket: Dict) -> Tuple[float, Dict, Dict]:
                 amount = amount % value['quantity']
             if value['bonus']:
                 bonus_foods[value['bonus']] += bonus_mul
+        print(food[disc]['price'],amount)
         total += food[disc]['price']*amount + bonus_mul*value['discount']
     return total, parsed_basket, dict(bonus_foods)
 
